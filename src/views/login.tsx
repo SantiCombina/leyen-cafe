@@ -1,43 +1,21 @@
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-
-import {supabase} from "@/supabase/supabase";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {loginSchema, LoginValues} from "@/schemas/login-schema";
+import {useLoginStore} from "@/store/login-store";
 
 export function Login() {
-    const {handleSubmit, register} = useForm<LoginValues>({resolver: zodResolver(loginSchema)});
-
-    const navigate = useNavigate();
-
-    const onSubmit = async (values: LoginValues) => {
-        try {
-            await supabase.auth.signInWithOtp({
-                email: values.email,
-                options: {emailRedirectTo: `${window.location.origin}/login`},
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    useEffect(() => {
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                navigate("/");
-            }
-        });
-    }, [navigate]);
+    const loginGoogle = useLoginStore((state) => state.loginGoogle);
 
     return (
-        <div>
-            <form action="" onSubmit={handleSubmit(onSubmit)}>
-                <Input {...register("email")} placeholder="tuemail@sitio.com" type="email" />
-                <Button>Enviar</Button>
-            </form>
-        </div>
+        <section
+            className="flex justify-center flex-col items-center px-10 py-14  border-2 border-white/20 bg-transparent w-[350px] rounded-3xl text-black gap-3 backdrop-blur-[25px]"
+            style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
+        >
+            <span>Log in to stay organized!</span>
+            <button
+                className="flex justify-center items-center gap-2 rounded-lg text-[#808080] py-2 px-6 bg-[#EFEFEF]"
+                onClick={loginGoogle}
+            >
+                <img alt="Google icon" src="/google.svg" />
+                Log in with Google
+            </button>
+        </section>
     );
 }
