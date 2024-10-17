@@ -1,5 +1,6 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {toast} from "sonner";
 
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
@@ -25,19 +26,28 @@ export function Home() {
     });
 
     const onSubmit = async (values: CardRequestValues) => {
-        const {data, error, status} = await supabase
+        const {data, status, error} = await supabase
             .from("cards")
             .insert([{dni: values.dni, amount: 0}])
             .select();
 
+        if (status === 201) {
+            toast.success("Tarjeta creada correctamente");
+        } else {
+            if (error?.message.includes("duplicate key value violates unique constraint")) {
+                toast.error("El DNI ingresado ya está registrado. Por favor, verifica los datos.");
+            } else {
+                const errorMessage = error?.message || "Error desconocido";
+
+                toast.error(errorMessage);
+            }
+        }
         if (data) {
-            const {data: user_data, error} = await supabase
+            const {} = await supabase
                 .from("users")
                 .insert([{...values, card_id: data[0].id, id: session?.user.id}])
                 .select();
         }
-
-        console.log(data);
     };
 
     return (

@@ -1,4 +1,5 @@
 import {Route, Routes} from "react-router-dom";
+import {Toaster} from "sonner";
 
 import {Home} from "./views/home";
 import {Login} from "./views/login";
@@ -8,15 +9,18 @@ import {Layout} from "./components/layout/layout";
 
 function App() {
     return (
-        <Routes>
-            <Route element={<Layout />}>
-                <Route element={<Login />} path="/login" />
-                <Route element={<ProtectedRoute />}>
-                    <Route element={<Home />} path="/" />
+        <>
+            <Toaster richColors />
+            <Routes>
+                <Route element={<Layout />}>
+                    <Route element={<Login />} path="/login" />
+                    <Route element={<ProtectedRoute />}>
+                        <Route element={<Home />} path="/" />
+                    </Route>
+                    <Route element={<NotFound />} path="*" />
                 </Route>
-                <Route element={<NotFound />} path="*" />
-            </Route>
-        </Routes>
+            </Routes>
+        </>
     );
 }
 
