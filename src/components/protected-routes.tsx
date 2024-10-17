@@ -1,31 +1,24 @@
+import {useEffect} from "react";
 import {Navigate, Outlet} from "react-router-dom";
-import {useEffect, useState} from "react";
 
 import {Spinner} from "./spinner";
 
-import {supabase} from "@/supabase/supabase";
 import {useLoginStore} from "@/store/login-store";
 
 export function ProtectedRoute() {
-    const [logged, setLogged] = useState<boolean | null>(null);
-    const session = useLoginStore((state) => state.session);
+    const isLogged = useLoginStore((state) => state.isLogged);
     const loading = useLoginStore((state) => state.loading);
+    const checkUser = useLoginStore((state) => state.checkUser);
 
     useEffect(() => {
-        const checkSession = async () => {
-            const getSession = await supabase.auth.getSession();
+        checkUser();
+    }, [checkUser]);
 
-            setLogged(getSession?.data?.session?.access_token ? true : false);
-        };
-
-        checkSession();
-    }, [session]);
-
-    if (logged === null && loading) {
+    if (loading) {
         return <Spinner />;
     }
 
-    if (!logged) {
+    if (!isLogged) {
         return <Navigate to="/login" />;
     }
 

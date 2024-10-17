@@ -1,21 +1,26 @@
 import {Route, Routes} from "react-router-dom";
+import {Toaster} from "sonner";
 
 import {Home} from "./views/home";
 import {Login} from "./views/login";
 import {NotFound} from "./views/not-found";
 import {ProtectedRoute} from "./components/protected-routes";
+import {Layout} from "./components/layout/layout";
 
 function App() {
     return (
-        <div className="min-h-[100dvh] flex flex-col justify-center items-center p-6">
+        <>
+            <Toaster richColors />
             <Routes>
-                <Route element={<ProtectedRoute />}>
-                    <Route element={<Home />} path="/" />
+                <Route element={<Layout />}>
+                    <Route element={<Login />} path="/login" />
+                    <Route element={<ProtectedRoute />}>
+                        <Route element={<Home />} path="/" />
+                    </Route>
+                    <Route element={<NotFound />} path="*" />
                 </Route>
-                <Route element={<Login />} path="/login" />
-                <Route element={<NotFound />} path="*" />
             </Routes>
-        </div>
+        </>
     );
 }
 
