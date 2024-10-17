@@ -1,17 +1,27 @@
-import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
 import {toast} from "sonner";
 
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {useLoginStore} from "@/store/login-store";
+import {cn} from "@/lib/utils";
 import {cardRequestSchema, CardRequestValues} from "@/schemas/card-request-schema";
+import {useLoginStore} from "@/store/login-store";
 import {supabase} from "@/supabase/supabase";
+import {Modal} from "@/components/modal";
 
 export function Home() {
+    const [firstNameFocused, setFirstNameFocused] = useState(false);
+    const [lastNameFocused, setLastNameFocused] = useState(false);
+    const [dniFocused, setDniFocused] = useState(false);
+    const [cellphoneFocused, setCellphoneFocused] = useState(false);
+    const [streetFocused, setStreetFocused] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [openCreateCardModal, setCreateCardModalOpen] = useState(false);
+
     const session = useLoginStore((state) => state.session);
-    const logout = useLoginStore((state) => state.logout);
 
     const methods = useForm<CardRequestValues>({
         resolver: zodResolver(cardRequestSchema),
@@ -26,6 +36,8 @@ export function Home() {
     });
 
     const onSubmit = async (values: CardRequestValues) => {
+        setIsLoading(true);
+
         const {data, status, error} = await supabase
             .from("cards")
             .insert([{dni: values.dni, amount: 0}])
@@ -42,106 +54,196 @@ export function Home() {
                 toast.error(errorMessage);
             }
         }
+
         if (data) {
             const {} = await supabase
                 .from("users")
                 .insert([{...values, card_id: data[0].id, id: session?.user.id}])
                 .select();
         }
+
+        setIsLoading(false);
     };
 
     return (
         <div
-            className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl gap-3 backdrop-blur-[25px]"
+            className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl gap-6 backdrop-blur-[25px]"
             style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
         >
-            <span>Bienvenido</span>
-            <Form {...methods}>
-                <form className="space-y-4" onSubmit={methods.handleSubmit(onSubmit)}>
-                    <FormField
-                        control={methods.control}
-                        name="email"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input type="email" {...field} disabled />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={methods.control}
-                        name="first_name"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Nombre</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Nombre" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={methods.control}
-                        name="last_name"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Apellido</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Apellido" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={methods.control}
-                        name="dni"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>DNI</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="00.000.000" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={methods.control}
-                        name="cellphone"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Celular</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="0000 0000000" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={methods.control}
-                        name="street"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Calle</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Calle 123" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button className="w-full" type="submit">
-                        Darme de alta
-                    </Button>
-                </form>
-            </Form>
-            <Button onClick={logout}>Salir</Button>
+            <span className="text-xl font-semibold">Bienvenido</span>
+            <Modal
+                buttonText="Activar tarjeta"
+                description="Para activar tu tarjeta, completá los siguientes datos"
+                isLoading={isLoading}
+                open={openCreateCardModal}
+                setOpen={setCreateCardModalOpen}
+                title="Activar tarjeta"
+                trigger={<Button>Activar tarjeta de socio</Button>}
+                onAccept={methods.handleSubmit(onSubmit)}
+                onCancel={methods.reset}
+            >
+                <Form {...methods}>
+                    <form className="w-full space-y-3">
+                        <FormField
+                            control={methods.control}
+                            name="email"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel className="absolute z-10 px-1 text-xs transition-all duration-200 -top-2 left-3 text-primary bg-background">
+                                        Email *
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input type="email" {...field} disabled />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={methods.control}
+                            name="first_name"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel
+                                        className={cn(
+                                            firstNameFocused || field.value
+                                                ? "-translate-y-5 bg-background px-1 text-xs"
+                                                : "",
+                                            "absolute left-3 top-3 text-primary transition-all duration-200",
+                                        )}
+                                    >
+                                        Nombre *
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            onBlur={() => setFirstNameFocused(false)}
+                                            onFocus={() => setFirstNameFocused(true)}
+                                        />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={methods.control}
+                            name="last_name"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel
+                                        className={cn(
+                                            lastNameFocused || field.value
+                                                ? "-translate-y-5 bg-background px-1 text-xs"
+                                                : "",
+                                            "absolute left-3 top-3 text-primary transition-all duration-200",
+                                        )}
+                                    >
+                                        Apellido *
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            onBlur={() => setLastNameFocused(false)}
+                                            onFocus={() => setLastNameFocused(true)}
+                                        />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={methods.control}
+                            name="dni"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel
+                                        className={cn(
+                                            dniFocused || field.value
+                                                ? "-translate-y-5 bg-background px-1 text-xs"
+                                                : "",
+                                            "absolute left-3 top-3 text-primary transition-all duration-200",
+                                        )}
+                                    >
+                                        DNI *
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            onBlur={() => setDniFocused(false)}
+                                            onFocus={() => setDniFocused(true)}
+                                        />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={methods.control}
+                            name="cellphone"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel
+                                        className={cn(
+                                            cellphoneFocused || field.value
+                                                ? "-translate-y-5 bg-background px-1 text-xs"
+                                                : "",
+                                            "absolute left-3 top-3 text-primary transition-all duration-200",
+                                        )}
+                                    >
+                                        Celular
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            onBlur={() => setCellphoneFocused(false)}
+                                            onFocus={() => setCellphoneFocused(true)}
+                                        />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={methods.control}
+                            name="street"
+                            render={({field}) => (
+                                <FormItem className="relative w-full">
+                                    <FormLabel
+                                        className={cn(
+                                            streetFocused || field.value
+                                                ? "-translate-y-5 bg-background px-1 text-xs"
+                                                : "",
+                                            "absolute left-3 top-3 text-primary transition-all duration-200",
+                                        )}
+                                    >
+                                        Calle
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            onBlur={() => setStreetFocused(false)}
+                                            onFocus={() => setStreetFocused(true)}
+                                        />
+                                    </FormControl>
+                                    <div className="h-[1rem]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                    </form>
+                </Form>
+            </Modal>
         </div>
     );
 }
