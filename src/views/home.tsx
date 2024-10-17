@@ -67,7 +67,7 @@ export function Home() {
 
     return (
         <div
-            className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl gap-6 backdrop-blur-[25px]"
+            className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl gap-4 backdrop-blur-[25px]"
             style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
         >
             <span className="text-xl font-semibold">Bienvenido</span>
