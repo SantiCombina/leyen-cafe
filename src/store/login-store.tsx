@@ -18,10 +18,10 @@ export const useLoginStore = create<LoginStore>()((set) => ({
     loading: true,
     checkUser: async () => {
         supabase.auth.onAuthStateChange((event, session) => {
-            if (event || session) {
-                set({session: session});
+            if (event && session) {
+                set({session: session, isLogged: true, loading: false});
             } else {
-                set({session: null});
+                set({session: null, isLogged: false, loading: false});
             }
         });
     },
