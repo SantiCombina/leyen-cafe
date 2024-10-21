@@ -24,7 +24,7 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
 
     getUserCard: async () => {
         set({loading: true});
-        const {data, error} = await supabase
+        const {data} = await supabase
             .from("users")
             .select("*, cards(*)")
             .eq("auth_user_id", get().session?.user.id)
@@ -33,10 +33,6 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
         if (data) {
             set({cardData: data.cards[0]});
         }
-        if (error) {
-            toast.error("Error al obtener los datos de la tarjeta");
-        }
-
         set({loading: false});
     },
     checkUser: async () => {
