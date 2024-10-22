@@ -27,6 +27,7 @@ export function Home() {
 
     const session = useLoginStore((state) => state.session);
     const cardData = useLoginStore((state) => state.cardData);
+    const userData = useLoginStore((state) => state.userData);
     const checkUser = useLoginStore().checkUser;
 
     const methods = useForm<CardRequestValues>({
@@ -82,15 +83,17 @@ export function Home() {
             style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
         >
             <span className="text-xl font-semibold">Bienvenido</span>
-            {cardData ? (
-                <div className="flex flex-col justify-between bg-primary text-white h-full p-8 gap-6 rounded-md w-full">
-                    <div className="w-full text-start font-bold">Leyen</div>
-                    <div className="flex justify-between">
+            {cardData && userData ? (
+                <div className="flex flex-col justify-between bg-gradient-to-r from-amber-900 via-orange-500 to-orange-400 text-white h-full p-2 gap-12 rounded-md w-full">
+                    <div className="w-full text-start font-bold">{userData.full_name}</div>
+                    <div className="flex justify-between text-xs">
                         <div className="flex flex-col">
-                            <span>Creada </span> <span className="text-start">{formatDate(cardData.created_at)}</span>
+                            <span className="tiny">desde</span>
+                            <span className="text-start">{formatDate(cardData.created_at)}</span>
                         </div>
                         <div className="flex flex-col">
-                            <span>Saldo </span> <span className="text-end">{cardData.amount}</span>
+                            <span>Saldo</span>
+                            <span className="text-end">{cardData.amount}</span>
                         </div>
                     </div>
                 </div>
