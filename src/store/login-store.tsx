@@ -5,6 +5,7 @@ import {supabase} from "@/supabase/supabase";
 import {Database} from "@/types/database.types";
 
 type UserData = {
+    id: string;
     first_name: string;
     last_name: string;
     full_name: string;
@@ -20,6 +21,7 @@ interface LoginStore {
     logout: () => void;
     checkUser: () => void;
     getUserCard: () => void;
+    updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"]) => void;
 }
 
 export const useLoginStore = create<LoginStore>()((set, get) => ({
@@ -28,21 +30,23 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
     loading: true,
     cardData: undefined,
     userData: undefined,
-
+    updateCardData: (updatedCard) => {
+        set({cardData: updatedCard});
+    },
     getUserCard: async () => {
         set({loading: true});
         const {data} = await supabase
             .from("users")
-            .select("first_name, last_name, cards(*)")
+            .select("id,first_name, last_name, cards(*)")
             .eq("auth_user_id", get().session?.user.id)
             .single();
 
         if (data) {
-            const {first_name, last_name, cards} = data;
+            const {first_name, last_name, cards, id} = data;
             const full_name = `${first_name} ${last_name}`;
 
             set({
-                userData: {first_name, last_name, full_name},
+                userData: {id, first_name, last_name, full_name},
                 cardData: cards[0],
             });
         }
