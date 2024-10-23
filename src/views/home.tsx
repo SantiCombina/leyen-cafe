@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {toast} from "sonner";
 
+import {Modal} from "@/components/modal";
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
@@ -10,7 +11,7 @@ import {cn} from "@/lib/utils";
 import {cardRequestSchema, CardRequestValues} from "@/schemas/card-request-schema";
 import {useLoginStore} from "@/store/login-store";
 import {supabase} from "@/supabase/supabase";
-import {Modal} from "@/components/modal";
+import {UpdateCard} from "@/components/update-card";
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleString("en-US", {month: "2-digit", year: "2-digit"}).replace(",", "");
@@ -92,7 +93,9 @@ export function Home() {
                             <span className="text-start">{formatDate(cardData.created_at)}</span>
                         </div>
                         <div className="flex flex-col">
-                            <span>Saldo</span>
+                            <span className="flex justify-between items-center">
+                                Saldo <UpdateCard />
+                            </span>
                             <span className="text-end">{cardData.amount}</span>
                         </div>
                     </div>
