@@ -32,7 +32,7 @@ export type Database = {
                     auth_user_id: string | null;
                     cellphone: string | null;
                     created_at: string | null;
-                    dni: number | null;
+                    dni: string | null;
                     email: string | null;
                     first_name: string | null;
                     id: string;
