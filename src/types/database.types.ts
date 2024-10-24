@@ -25,6 +25,32 @@ export type Database = {
                     id?: string;
                     user_id?: string | null;
                 };
+                Relationships: [
+                    {
+                        foreignKeyName: "cards_user_id_fkey";
+                        columns: ["user_id"];
+                        isOneToOne: false;
+                        referencedRelation: "users";
+                        referencedColumns: ["id"];
+                    },
+                ];
+            };
+            roles: {
+                Row: {
+                    created_at: string;
+                    id: number;
+                    role_name: Database["public"]["Enums"]["role"] | null;
+                };
+                Insert: {
+                    created_at?: string;
+                    id?: number;
+                    role_name?: Database["public"]["Enums"]["role"] | null;
+                };
+                Update: {
+                    created_at?: string;
+                    id?: number;
+                    role_name?: Database["public"]["Enums"]["role"] | null;
+                };
                 Relationships: [];
             };
             users: {
@@ -37,34 +63,42 @@ export type Database = {
                     first_name: string | null;
                     id: string;
                     last_name: string | null;
-                    role: Database["public"]["Enums"]["role"] | null;
+                    role_id: number | null;
                     street: string | null;
                 };
                 Insert: {
                     auth_user_id?: string | null;
                     cellphone?: string | null;
                     created_at?: string | null;
-                    dni?: number | null;
+                    dni?: string | null;
                     email?: string | null;
                     first_name?: string | null;
                     id?: string;
                     last_name?: string | null;
-                    role?: Database["public"]["Enums"]["role"] | null;
+                    role_id?: number | null;
                     street?: string | null;
                 };
                 Update: {
                     auth_user_id?: string | null;
                     cellphone?: string | null;
                     created_at?: string | null;
-                    dni?: number | null;
+                    dni?: string | null;
                     email?: string | null;
                     first_name?: string | null;
                     id?: string;
                     last_name?: string | null;
-                    role?: Database["public"]["Enums"]["role"] | null;
+                    role_id?: number | null;
                     street?: string | null;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: "users_role_id_fkey";
+                        columns: ["role_id"];
+                        isOneToOne: false;
+                        referencedRelation: "roles";
+                        referencedColumns: ["id"];
+                    },
+                ];
             };
         };
         Views: {
