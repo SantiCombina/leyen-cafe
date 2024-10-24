@@ -16,12 +16,11 @@ import {cn} from "@/lib/utils";
 import {TablesUpdate} from "@/types/database.types";
 
 export function UpdateCard() {
-    const cardData = useLoginStore((state) => state.cardData);
     const [isLoading, setIsLoading] = useState(false);
     const [isPlus, setIsPlus] = useState(true);
     const [openCreateCardModal, setOpenCreateCardModal] = useState(false);
 
-    // const cardAmount = cardData?.amount;
+    const cardData = useLoginStore((state) => state.cardData);
 
     const methods = useForm<CardUpdateValues>({
         resolver: zodResolver(cardUpdateSchema),
@@ -60,7 +59,7 @@ export function UpdateCard() {
     };
 
     return (
-        <div>
+        <div className="cursor-pointer">
             <Modal
                 buttonText="Actualizar saldo"
                 description="Pon el monto a actualizar"
