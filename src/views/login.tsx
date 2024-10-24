@@ -17,7 +17,7 @@ export function Login() {
     return (
         <div className="min-h-[100dvh] flex justify-center items-center container">
             <div
-                className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl text-primary gap-5 backdrop-blur-[25px]"
+                className="flex justify-center flex-col items-center p-12 border-2 border-white/20 bg-transparent w-full sm:max-w-[425px] sm:rounded-3xl text-primary gap-4 backdrop-blur-[25px]"
                 style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
             >
                 <span className="text-xl font-semibold">Inicia sesión!</span>
