@@ -68,7 +68,7 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
             provider: "google",
             options: {
                 queryParams: {prompt: "select_account"},
-                redirectTo: "http://localhost:5173/",
+                redirectTo: "http://localhost:5173/card",
             },
         });
         set({
