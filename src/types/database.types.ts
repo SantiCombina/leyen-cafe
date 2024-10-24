@@ -63,7 +63,7 @@ export type Database = {
                     first_name: string | null;
                     id: string;
                     last_name: string | null;
-                    role_id: number | null;
+                    role_id: number;
                     street: string | null;
                 };
                 Insert: {
@@ -75,7 +75,7 @@ export type Database = {
                     first_name?: string | null;
                     id?: string;
                     last_name?: string | null;
-                    role_id?: number | null;
+                    role_id: number;
                     street?: string | null;
                 };
                 Update: {
@@ -87,7 +87,7 @@ export type Database = {
                     first_name?: string | null;
                     id?: string;
                     last_name?: string | null;
-                    role_id?: number | null;
+                    role_id?: number;
                     street?: string | null;
                 };
                 Relationships: [
