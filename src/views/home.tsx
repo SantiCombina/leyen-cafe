@@ -13,10 +13,6 @@ import {useLoginStore} from "@/store/login-store";
 import {supabase} from "@/supabase/supabase";
 import {UpdateCard} from "@/components/update-card";
 
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleString("en-US", {month: "2-digit", year: "2-digit"}).replace(",", "");
-};
-
 export function Home() {
     const [firstNameFocused, setFirstNameFocused] = useState(false);
     const [lastNameFocused, setLastNameFocused] = useState(false);
@@ -80,25 +76,26 @@ export function Home() {
 
     return (
         <div
-            className="flex justify-center flex-col items-center px-10 py-14 border-2 border-white/20 bg-transparent w-[350px] rounded-3xl gap-4 backdrop-blur-[25px]"
+            className="flex justify-center flex-col items-center p-12 border-2 border-white/20 bg-transparent w-full sm:max-w-[425px] sm:rounded-3xl gap-4 backdrop-blur-[25px]"
             style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
         >
             <span className="text-xl font-semibold">Bienvenido</span>
             {cardData && userData ? (
-                <div className="flex flex-col justify-between bg-gradient-to-r from-amber-900 via-orange-500 to-orange-400 text-white h-full p-2 gap-12 rounded-md w-full">
-                    <div className="w-full text-start font-bold">{userData.full_name}</div>
-                    <div className="flex justify-between text-xs">
-                        <div className="flex flex-col">
-                            <span className="tiny">desde</span>
-                            <span className="text-start">{formatDate(cardData.created_at)}</span>
+                <div className="flex flex-col items-end justify-between h-[50dvh]">
+                    <div
+                        className="flex flex-col justify-between bg-lime-400 text-white p-6 rounded-lg w-[300px] h-[180px]"
+                        style={{boxShadow: "0 0 10px rgba(0, 0, 0, .2)"}}
+                    >
+                        <div className="flex flex-col items-end w-full font-semibold leading-3">
+                            <UpdateCard />
+                            <span>Saldo</span>
+                            <span className="text-lg">{cardData.amount}</span>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="flex justify-between items-center">
-                                Saldo <UpdateCard />
-                            </span>
-                            <span className="text-end">{cardData.amount}</span>
-                        </div>
+                        <span className="text-lg font-bold">{userData.full_name}</span>
                     </div>
+                    <Button disabled className="w-fit">
+                        Solicitar tarjeta física
+                    </Button>
                 </div>
             ) : (
                 <Modal
