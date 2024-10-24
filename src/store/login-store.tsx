@@ -3,6 +3,7 @@ import {Session} from "@supabase/supabase-js";
 
 import {supabase} from "@/supabase/supabase";
 import {Database} from "@/types/database.types";
+import {ENVIRONMENT} from "@/settings/config";
 
 interface LoginStore {
     session: Session | null | undefined;
@@ -16,6 +17,11 @@ interface LoginStore {
     getUserCard: () => void;
     updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"]) => void;
 }
+
+const environment = {
+    dev: "http://localhost:5173",
+    prod: "https://leyen-cafe.vercel.app",
+};
 
 export const useLoginStore = create<LoginStore>()((set, get) => ({
     session: undefined,
@@ -77,7 +83,7 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
             provider: "google",
             options: {
                 queryParams: {prompt: "select_account"},
-                redirectTo: "http://localhost:5173/card",
+                redirectTo: `${environment[ENVIRONMENT]}/card`,
             },
         });
         set({
