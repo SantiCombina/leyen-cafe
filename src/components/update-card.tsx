@@ -10,10 +10,10 @@ import {Button} from "./ui/button";
 import {Modal} from "./modal";
 
 import {cardUpdateSchema, CardUpdateValues} from "@/schemas/card-update-schema";
-import {supabase} from "@/supabase/supabase";
 import {useLoginStore} from "@/store/login-store";
 import {cn} from "@/lib/utils";
 import {TablesUpdate} from "@/types/database.types";
+import {supabase} from "@/supabase/supabase";
 
 export function UpdateCard() {
     const [isLoading, setIsLoading] = useState(false);
@@ -46,14 +46,19 @@ export function UpdateCard() {
             amount: newAmount,
         };
 
-        const {error} = await supabase.from("cards").update(updateData).eq("id", cardData.id);
+        const {error, data} = await supabase.from("cards").update(updateData).eq("id", cardData.id).select("amount");
 
-        if (error) {
-            toast.error("Error al actualizar el saldo de la tarjeta");
+        if (data?.length === 0) {
+            toast.error("No se actualizó el saldo de la tarjeta");
+            setIsLoading(false);
         } else {
-            toast.success("Saldo actualizado correctamente");
-            useLoginStore.getState().updateCardData({...cardData, amount: newAmount});
-            setOpenCreateCardModal(false);
+            if (error) {
+                toast.error("Error al actualizar el saldo de la tarjeta");
+            } else {
+                toast.success("Saldo actualizado correctamente");
+                useLoginStore.getState().updateCardData({...cardData, amount: newAmount});
+                setOpenCreateCardModal(false);
+            }
         }
         setIsLoading(false);
     };
