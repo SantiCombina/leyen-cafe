@@ -4,19 +4,12 @@ import {Session} from "@supabase/supabase-js";
 import {supabase} from "@/supabase/supabase";
 import {Database} from "@/types/database.types";
 
-type UserData = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-};
-
 interface LoginStore {
     session: Session | null | undefined;
     isLogged: boolean;
     loading: boolean;
+    userData: undefined | Database["public"]["Tables"]["users"]["Row"];
     cardData: undefined | Database["public"]["Tables"]["cards"]["Row"];
-    userData: undefined | UserData;
     loginGoogle: () => void;
     logout: () => void;
     checkUser: () => void;
@@ -35,18 +28,34 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
     },
     getUserCard: async () => {
         set({loading: true});
-        const {data} = await supabase
+        const {data, error} = await supabase
             .from("users")
-            .select("id,first_name, last_name, cards(*)")
+            .select("*,  cards(*), roles(*)")
             .eq("auth_user_id", get().session?.user.id)
             .single();
 
+        if (error) {
+            set({loading: false});
+
+            return;
+        }
+
         if (data) {
-            const {first_name, last_name, cards, id} = data;
-            const full_name = `${first_name} ${last_name}`;
+            const {id, first_name, last_name, email, dni, cellphone, street, cards} = data;
 
             set({
-                userData: {id, first_name, last_name, full_name},
+                userData: {
+                    id,
+                    first_name,
+                    last_name,
+                    email,
+                    dni,
+                    cellphone,
+                    street,
+                    auth_user_id: data.auth_user_id,
+                    created_at: data.created_at,
+                    role_id: data.role_id,
+                },
                 cardData: cards[0],
             });
         }

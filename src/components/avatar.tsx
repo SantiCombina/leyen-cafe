@@ -1,7 +1,7 @@
 import {Avatar as AvatarComponent, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {useLoginStore} from "@/store/login-store";
 
-export function Avatar() {
+export function Avatar({className}: {className?: string}) {
     const session = useLoginStore((state) => state.session);
 
     const initials = () => {
@@ -14,7 +14,7 @@ export function Avatar() {
     };
 
     return (
-        <AvatarComponent>
+        <AvatarComponent className={className}>
             <AvatarImage
                 alt={session?.user.user_metadata.full_name ?? session?.user.email}
                 src={session?.user.user_metadata.picture}
