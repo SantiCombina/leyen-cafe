@@ -3,7 +3,7 @@ import {Session} from "@supabase/supabase-js";
 
 import {supabase} from "@/supabase/supabase";
 import {Database} from "@/types/database.types";
-import {ENVIRONMENT} from "@/settings/config";
+import {DEV_URL, ENVIRONMENT, PROD_URL} from "@/settings/config";
 
 interface LoginStore {
     session: Session | null | undefined;
@@ -19,8 +19,8 @@ interface LoginStore {
 }
 
 const environment = {
-    dev: "http://localhost:5173",
-    prod: "https://leyen-cafe.vercel.app",
+    dev: DEV_URL,
+    prod: PROD_URL,
 };
 
 export const useLoginStore = create<LoginStore>()((set, get) => ({
