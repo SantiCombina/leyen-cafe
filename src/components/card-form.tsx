@@ -1,6 +1,6 @@
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
-import {Form, useForm} from "react-hook-form";
+import {FormProvider, useForm} from "react-hook-form";
 import {toast} from "sonner";
 
 import {Modal} from "./modal";
@@ -84,7 +84,7 @@ export function CardForm() {
             onAccept={methods.handleSubmit(onSubmit)}
             onCancel={methods.reset}
         >
-            <Form {...methods}>
+            <FormProvider {...methods}>
                 <form className="w-full space-y-3">
                     <FormField
                         control={methods.control}
@@ -240,7 +240,7 @@ export function CardForm() {
                         )}
                     />
                 </form>
-            </Form>
+            </FormProvider>
         </Modal>
     );
 }
