@@ -15,7 +15,7 @@ interface LoginStore {
     logout: () => void;
     checkUser: () => void;
     getUserCard: () => void;
-    updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"]) => void;
+    updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"] | undefined) => void;
 }
 
 const environment = {
