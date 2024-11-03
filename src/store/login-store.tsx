@@ -3,6 +3,7 @@ import {Session} from "@supabase/supabase-js";
 
 import {supabase} from "@/supabase/supabase";
 import {Database} from "@/types/database.types";
+import {DEV_URL, ENVIRONMENT, PROD_URL} from "@/settings/config";
 
 interface LoginStore {
     session: Session | null | undefined;
@@ -14,8 +15,13 @@ interface LoginStore {
     logout: () => void;
     checkUser: () => void;
     getUserCard: () => void;
-    updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"]) => void;
+    updateCardData: (updatedCard: Database["public"]["Tables"]["cards"]["Row"] | undefined) => void;
 }
+
+const environment = {
+    dev: DEV_URL,
+    prod: PROD_URL,
+};
 
 export const useLoginStore = create<LoginStore>()((set, get) => ({
     session: undefined,
@@ -77,7 +83,7 @@ export const useLoginStore = create<LoginStore>()((set, get) => ({
             provider: "google",
             options: {
                 queryParams: {prompt: "select_account"},
-                redirectTo: "http://localhost:5173/card",
+                redirectTo: `${environment[ENVIRONMENT]}/card`,
             },
         });
         set({
