@@ -11,9 +11,9 @@ export function DeleteUser() {
     const checkUser = useLoginStore((state) => state.checkUser);
 
     const handleDeleteUser = async () => {
-        const {error} = await supabase.from("users").delete().eq("auth_user_id", session?.user.id).select();
+        const {data} = await supabase.from("users").delete().eq("auth_user_id", session?.user.id).select();
 
-        if (error) {
+        if (data?.length === 0) {
             toast.error("Error al eliminar el usuario");
         } else {
             toast.success("Usuario eliminado correctamente");
@@ -24,7 +24,9 @@ export function DeleteUser() {
 
     return (
         <div>
-            <Button onClick={handleDeleteUser}>Borrar usuario</Button>
+            <Button variant="destructive" onClick={handleDeleteUser}>
+                Borrar usuario
+            </Button>
         </div>
     );
 }
